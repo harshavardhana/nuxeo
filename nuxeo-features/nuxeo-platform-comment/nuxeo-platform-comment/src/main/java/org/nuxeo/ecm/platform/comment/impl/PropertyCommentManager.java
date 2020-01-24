@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2018 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2018-2020 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,9 @@ import org.nuxeo.runtime.api.Framework;
  * Comment service implementation. The comments are linked together thanks to a parent document id property.
  *
  * @since 10.3
+ * @deprecated since 11.1, use {@link TreeCommentManager} instead
  */
+@Deprecated(since = "11.1")
 public class PropertyCommentManager extends AbstractCommentManager {
 
     protected static final String GET_COMMENT_PAGEPROVIDER_NAME = "GET_COMMENT_AS_EXTERNAL_ENTITY";

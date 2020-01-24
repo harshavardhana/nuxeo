@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2018-2019 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2018-2020 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +74,7 @@ public abstract class AbstractCommentManager implements CommentManager {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public List<DocumentModel> getComments(DocumentModel docModel, DocumentModel parent) {
         return getComments(docModel);
     }
@@ -172,9 +173,9 @@ public abstract class AbstractCommentManager implements CommentManager {
     }
 
     /**
-     * @deprecated since 10.10-HF12. Not used anymore
+     * @deprecated since 11.1. Not used anymore
      */
-    @Deprecated
+    @Deprecated(since = "11.1")
     protected void setCommentPermissions(CoreSession session, DocumentModel documentModel) {
         ACP acp = new ACPImpl();
         ACE grantRead = new ACE(SecurityConstants.EVERYONE, SecurityConstants.READ, true);
