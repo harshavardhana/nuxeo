@@ -201,6 +201,11 @@ pipeline {
   }
   stages {
     stage('Set labels') {
+      when {
+        expression {
+          return false
+        }
+      }
       steps {
         container('maven') {
           echo """
@@ -217,6 +222,9 @@ pipeline {
     }
     stage('Update version') {
       when {
+        expression {
+          return false
+        }
         branch 'PR-*'
       }
       steps {
@@ -235,6 +243,11 @@ pipeline {
       }
     }
     stage('Compile') {
+      when {
+        expression {
+          return false
+        }
+      }
       steps {
         setGitHubBuildStatus('platform/compile', 'Compile', 'PENDING')
         container('maven') {
@@ -256,6 +269,11 @@ pipeline {
       }
     }
     stage('Package') {
+      when {
+        expression {
+          return false
+        }
+      }
       steps {
         setGitHubBuildStatus('platform/package', 'Package', 'PENDING')
         container('maven') {
@@ -277,6 +295,11 @@ pipeline {
       }
     }
     stage('Deploy Maven artifacts') {
+      when {
+        expression {
+          return false
+        }
+      }
       steps {
         setGitHubBuildStatus('platform/deploy', 'Deploy Maven artifacts', 'PENDING')
         container('maven') {
@@ -300,7 +323,8 @@ pipeline {
       when {
         expression {
           // only trigger JSF pipeline if the target branch is master or a maintenance branch
-          return CHANGE_TARGET ==~ 'master|\\d+\\.\\d+'
+          // return CHANGE_TARGET ==~ 'master|\\d+\\.\\d+'
+          return false
         }
       }
       steps {
@@ -324,6 +348,11 @@ pipeline {
       }
     }
     stage('Build Docker images') {
+      when {
+        expression {
+          return false
+        }
+      }
       steps {
         setGitHubBuildStatus('platform/docker/build', 'Build Docker images', 'PENDING')
         container('maven') {
@@ -349,6 +378,11 @@ pipeline {
       }
     }
     stage('Test Docker images') {
+      when {
+        expression {
+          return false
+        }
+      }
       steps {
         setGitHubBuildStatus('platform/docker/test', 'Test Docker images', 'PENDING')
         container('maven') {
@@ -401,6 +435,9 @@ pipeline {
     }
     stage('Deploy Docker images') {
       when {
+        expression {
+          return false
+        }
         branch 'master'
       }
       steps {
@@ -440,6 +477,11 @@ pipeline {
       }
     }
     stage('Run "dev" functional tests') {
+      when {
+        expression {
+          return false
+        }
+      }
       steps {
         setGitHubBuildStatus('platform/ftests/dev', 'Functional tests - dev environment', 'PENDING')
         container('maven') {
