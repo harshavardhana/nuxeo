@@ -100,9 +100,11 @@ public class StorageConfiguration {
 
     public static String defaultSystemProperty(String name, String def) {
         String value = System.getProperty(name);
+        log.error("SYSTEM PROP " + name + " = " + value);
         if (value == null || value.equals("") || value.equals("${" + name + "}")) {
             System.setProperty(name, value = def);
         }
+        log.error("RETURNING SYSTEM PROP " + name + " = " + value);
         return value;
     }
 
