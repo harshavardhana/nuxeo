@@ -20,8 +20,8 @@
 dockerNamespace = 'nuxeo'
 repositoryUrl = 'https://github.com/nuxeo/nuxeo'
 testEnvironments= [
-  'dev',
-  'mongodb',
+  // 'dev',
+  // 'mongodb',
   'postgresql',
 ]
 
@@ -120,27 +120,27 @@ def buildUnitTestStage(env) {
             Run ${env} unit tests
             ----------------------------------------"""
 
-            echo "${env} unit tests: install external services"
-            // initialize Helm without Tiller and add local repository
-            sh """
-              helm init --client-only
-              helm repo add ${HELM_CHART_REPOSITORY_NAME} ${HELM_CHART_REPOSITORY_URL}
-            """
-            // compute values for the nuxeo Helm chart
-            sh 'envsubst < ci/helm/nuxeo-test-base-values.yaml > nuxeo-test-base-values.yaml'
-            def testValues = '--set-file=nuxeo-test-base-values.yaml'
-            if (!isDev) {
-              sh "envsubst < ci/helm/nuxeo-test-${env}-values.yaml > nuxeo-test-${env}-values.yaml"
-              testValues += " --set-file=nuxeo-test-${env}-values.yaml"
-            }
-            // install the nuxeo Helm chart into a dedicated namespace that will be cleaned up afterwards
-            sh """
-              jx step helm install ${HELM_CHART_REPOSITORY_NAME}/${HELM_CHART_NUXEO} \
-                --name ${TEST_HELM_RELEASE} \
-                --namespace ${testNamespace} \
-                --version 1.0.2-PR-4-8 \
-                ${testValues}
-            """
+            // echo "${env} unit tests: install external services"
+            // // initialize Helm without Tiller and add local repository
+            // sh """
+            //   helm init --client-only
+            //   helm repo add ${HELM_CHART_REPOSITORY_NAME} ${HELM_CHART_REPOSITORY_URL}
+            // """
+            // // compute values for the nuxeo Helm chart
+            // sh 'envsubst < ci/helm/nuxeo-test-base-values.yaml > nuxeo-test-base-values.yaml'
+            // def testValues = '--set-file=nuxeo-test-base-values.yaml'
+            // if (!isDev) {
+            //   sh "envsubst < ci/helm/nuxeo-test-${env}-values.yaml > nuxeo-test-${env}-values.yaml"
+            //   testValues += " --set-file=nuxeo-test-${env}-values.yaml"
+            // }
+            // // install the nuxeo Helm chart into a dedicated namespace that will be cleaned up afterwards
+            // sh """
+            //   jx step helm install ${HELM_CHART_REPOSITORY_NAME}/${HELM_CHART_NUXEO} \
+            //     --name ${TEST_HELM_RELEASE} \
+            //     --namespace ${testNamespace} \
+            //     --version 1.0.2-PR-4-8 \
+            //     ${testValues}
+            // """
 
             echo "${env} unit tests: run Maven"
             // run unit tests for the given environment:
@@ -154,7 +154,12 @@ def buildUnitTestStage(env) {
             } else {
               sh "cp ci/mvn/nuxeo-test-${env}.properties ${HOME}/nuxeo-test-${env}.properties"
             }
-            sh "mvn -B -nsu -Dcustom.environment=${env} -Duser.home=${HOME} -Dnuxeo.test.redis.host=${redisHost} test"
+            // sh "mvn -B -nsu -Dcustom.environment=${env} -Duser.home=${HOME} -Dnuxeo.test.redis.host=${redisHost} test"
+            sh """
+              mvn -B -nsu -Dcustom.environment=${env} -Duser.home=${HOME} -Dnuxeo.test.redis.host=${redisHost} \
+                -pl=nuxeo-core/nuxeo-core-storage-sql/nuxeo-core-storage-sql-test -am -DfailIfNoTests=false -Dtest=TestSQLBackendSequenceId \
+                -Ppgsql test
+            """
 
             setGitHubBuildStatus("platform/utests/${env}", "Unit tests - ${env} environment", 'SUCCESS')
           } catch(err) {

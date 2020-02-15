@@ -24,12 +24,16 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.runtime.api.Framework;
 
 /**
  * @author Florent Guillaume
  */
 public class DatabasePostgreSQL extends DatabaseHelper {
+
+    private static final Log log = LogFactory.getLog(DatabasePostgreSQL.class);
 
     private static final String DEF_SERVER = "localhost";
 
@@ -49,6 +53,7 @@ public class DatabasePostgreSQL extends DatabaseHelper {
         String port = setProperty(PORT_PROPERTY, DEF_PORT);
         setProperty(USER_PROPERTY, DEF_USER);
         setProperty(PASSWORD_PROPERTY, DEF_PASSWORD);
+        log.error("Setting " + DRIVER_PROPERTY + " with default " + DRIVER);
         setProperty(DRIVER_PROPERTY, DRIVER);
         String url = String.format("jdbc:postgresql://%s:%s/%s", server, port, db);
         setProperty(URL_PROPERTY, url);
@@ -64,6 +69,8 @@ public class DatabasePostgreSQL extends DatabaseHelper {
             throw new RuntimeException(e);
         }
         setProperties();
+        Framework.getProperties().forEach((k,v) -> log.error("FRAMEWORK PROP [" + k + "] = " + v));
+        log.error(URL_PROPERTY + " = " + Framework.getProperty(URL_PROPERTY));
         Connection connection = DriverManager.getConnection(Framework.getProperty(URL_PROPERTY),
                 Framework.getProperty(USER_PROPERTY), Framework.getProperty(PASSWORD_PROPERTY));
         try {

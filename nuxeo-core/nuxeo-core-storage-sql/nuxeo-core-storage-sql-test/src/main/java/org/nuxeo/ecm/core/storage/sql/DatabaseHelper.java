@@ -62,6 +62,7 @@ public abstract class DatabaseHelper {
             className = DB_CLASS_NAME_BASE + className;
         }
         setDatabaseForTests(className);
+        System.getProperties().forEach((k,v) -> log.error("SYTEM PROP [" + k + "] = " + v));
     }
 
     // available for JDBC tests
@@ -94,6 +95,7 @@ public abstract class DatabaseHelper {
 
     public static String setProperty(String name, String def) {
         String value = System.getProperty(name);
+        log.error("system property " + name + " = " + value);
         if (value == null || value.equals("") || value.equals("${" + name + "}")) {
             value = def;
         }
